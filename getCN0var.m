@@ -2,12 +2,12 @@ function [R1,R2,R3,R4] = getCN0var(entry_index)
 %GETCN0 Summary of this function goes here
 %   Detailed explanation goes here
 Sat1CN0 = sqrt(4)*randn(1,10001) + 35;
-Sat1CN0(end-100,end) = sqrt(7)*randn(1,100) + 23;
+Sat1CN0(end-100:end) = sqrt(7)*randn(1,101) + 23;
 Sat2CN0 = sqrt(7)*randn(1,10001) + 23;
-Sat2CN0(6500:7500) = sqrt(10)*randn(1,100) + 15;
+Sat2CN0(6500:7500) = sqrt(10)*randn(1,1001) + 15;
 Sat3CN0 = sqrt(4)*randn(1,10001) + 35;
 Sat4CN0 = sqrt(7)*randn(1,10001) + 23;
-Sat4CN0(7000:8000) = sqrt(10)*randn(1,100) + 15;
+Sat4CN0(7000:8000) = sqrt(10)*randn(1,1001) + 15;
 
 
 CN01 = Sat1CN0(entry_index);

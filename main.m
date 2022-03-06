@@ -114,19 +114,6 @@ fixed_variance = 0; % to indicated variance should not be fixed
 all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
 [fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions, fixed_variance);
 
-x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
-time_to_run = 10; % in seconds
-t = (0:params.delta_t:time_to_run)';
-% Force input
-fx = 500*cos(.4*t);
-fy = 1000*sin(.05*t);
-u = [fx, fy];
-% Simulate Dynamics and Log
-Q = 1*10^-2*eye(2,2); % process covariance matrix
-R = 3; % sensor variance
-fixed_variance = 1; % to indicated variance should be fixed
-all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
-[fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions, fixed_variance);
 %% 4 Plot Pseudorange Measurements for each Satellite with time varying variance
 close all;
 sat1_meas = fixed_var_path_meas_log(:,1);

@@ -50,17 +50,17 @@ while(t < time_to_run)
         pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise;
         pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise;
         curr_meas = [pseudorange1_fixed; pseudorange2_fixed; pseudorange3_fixed; pseudorange4_fixed];
-    else
-        % safa gives R for each satellite
+    else        
+        [R1, R2, R3, R4] = getCN0var(entry_index); % Time varying variance with obstacle consideration
         sensor_noise1 = sqrt(R1)*randn(1,1);
         sensor_noise2 = sqrt(R2)*randn(1,1);
         sensor_noise3 = sqrt(R3)*randn(1,1);
         sensor_noise4 = sqrt(R4)*randn(1,1);
 
-        pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos]) + sensor_noise;
-        pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos]) + sensor_noise;
-        pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise;
-        pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos]) + sensor_noise1;
+        pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos]) + sensor_noise2;
+        pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise3;
+        pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise4;
         curr_meas = [pseudorange1_fixed; pseudorange2_fixed; pseudorange3_fixed; pseudorange4_fixed];
     end
     % Log
