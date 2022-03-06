@@ -52,38 +52,121 @@ fx = 500*cos(.4*t);
 fy = 1000*sin(.05*t);
 u = [fx, fy];
 % Simulate Dynamics and Log
-Q = 1*10^-5*eye(2,2);
-R = 5*10^-5*eye(2,2);
+Q = 1*10^-2*eye(2,2); % process covariance matrix
+R = 3; % sensor variance
+fixed_variance = 1; % to indicated variance should be fixed
 all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
-[fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions);
-%% 2. Plot True Path with Trees vs. Path with Fixed Variance, Gaussian White Noise
+[fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions, fixed_variance);
+%% 2. Plot Pseudorange Measurements for each Satellite with fixed variance
 close all;
-tree1_location = [4.5, 1];
-tree2_location = [5.9, 6];
+sat1_meas = fixed_var_path_meas_log(:,1);
+sat2_meas = fixed_var_path_meas_log(:,2);
+sat3_meas = fixed_var_path_meas_log(:,3);
+sat4_meas = fixed_var_path_meas_log(:,4);
+
+x_positions = fixed_var_path_state_log(:,1);
+y_positions = fixed_var_path_state_log(:,2);
+
+% Satellite 1 Pseudorange Meas Plot
 figure;
-hold on;
-x_positions = true_path_meas_log(:,1);
-y_positions = true_path_meas_log(:,2);
-% To become pseudorange plot that is in seperate figure
-% x_positions_fixed_var = fixed_var_path_meas_log(:,1);
-% y_positions_fixed_var = fixed_var_path_meas_log(:,2);
-
-% plot(x_positions, y_positions, 'b--');
-% plot(x_positions_fixed_var, y_positions_fixed_var, 'r--')
-plot(tree1_location(1), tree1_location(2),  'g^', 'MarkerFaceColor', 'green', 'MarkerSize', 14);
-plot(tree2_location(1), tree2_location(2),  'g^', 'MarkerFaceColor', 'green', 'MarkerSize', 14);
-plot(satellite1_location(1), satellite1_location(2),  'bs', 'MarkerFaceColor', 'blue', 'MarkerSize', 14);
-plot(satellite2_location(1), satellite2_location(2),  'bs', 'MarkerFaceColor', 'blue', 'MarkerSize', 14);
-plot(satellite3_location(1), satellite3_location(2),  'bs', 'MarkerFaceColor', 'blue', 'MarkerSize', 14);
-plot(satellite4_location(1), satellite4_location(2),  'bs', 'MarkerFaceColor', 'blue', 'MarkerSize', 14);
-
+plot3(x_positions, y_positions, sat1_meas);
+grid on;
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-title('True Vehicle Trajectory and Vehicle Trajectory with Fixed Variance Noise', 'Interpreter', 'latex', 'Fontsize', 16);
-legend('Vehicle Path','Tree 1', 'Tree 2','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest');
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 1 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat2_meas);
 grid on;
-hold off;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 2 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat3_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 3 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat4_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 4 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
 %% 3. Dynamics and Simulation, Time-Varying Variance, Gaussian White Noise
+x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
+time_to_run = 10; % in seconds
+t = (0:params.delta_t:time_to_run)';
+% Force input
+fx = 500*cos(.4*t);
+fy = 1000*sin(.05*t);
+u = [fx, fy];
+% Simulate Dynamics and Log
+Q = 1*10^-2*eye(2,2); % process covariance matrix
+R = 3; % sensor variance
+fixed_variance = 0; % to indicated variance should not be fixed
+all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
+[fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions, fixed_variance);
 
+x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
+time_to_run = 10; % in seconds
+t = (0:params.delta_t:time_to_run)';
+% Force input
+fx = 500*cos(.4*t);
+fy = 1000*sin(.05*t);
+u = [fx, fy];
+% Simulate Dynamics and Log
+Q = 1*10^-2*eye(2,2); % process covariance matrix
+R = 3; % sensor variance
+fixed_variance = 1; % to indicated variance should be fixed
+all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
+[fixed_var_path_meas_log, fixed_var_path_state_log] = simSystemandMeas(x0, u, time_to_run, params, Q,R, all_sat_positions, fixed_variance);
+%% 4 Plot Pseudorange Measurements for each Satellite with time varying variance
+close all;
+sat1_meas = fixed_var_path_meas_log(:,1);
+sat2_meas = fixed_var_path_meas_log(:,2);
+sat3_meas = fixed_var_path_meas_log(:,3);
+sat4_meas = fixed_var_path_meas_log(:,4);
 
+x_positions = fixed_var_path_state_log(:,1);
+y_positions = fixed_var_path_state_log(:,2);
+
+% Satellite 1 Pseudorange Meas Plot
+figure;
+plot3(x_positions, y_positions, sat1_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 1 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat2_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 2 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat3_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 3 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
+
+figure;
+plot3(x_positions, y_positions, sat4_meas);
+grid on;
+xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
+title('Satellite 4 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
 

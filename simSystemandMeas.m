@@ -1,11 +1,11 @@
-function [meas_log, state_log] = simSystemandMeas(x0, u, time_to_run, params, Q, R, sat_positions, fixed_noise)
+function [meas_log, state_log] = simSystemandMeas(x0, u, time_to_run, params, Q, R, sat_positions, fixed_variance)
 % Simulates system and measurements using pseudoranges
 % - Takes in initial conditions (x0 and xdot0), system inputs (u), the
 % time to run (time_to_run), and the system parameters (params, a struct), and 
 % returns a log of the state (state_log) and the measured variables (meas_log) of the system
 % - Q is process noise covariance matrix, R is sensor noise covariance matrix
 % - sat_positions is collection of satellite positions
-% - fixed_noise is 1 if the noise to add to measurements is fixed and 0 if it
+% - fixed_variance is 1 if the variance of the noise to add to measurements is fixed and 0 if it
 % is dynamic
 
 % Set up Logging
@@ -18,7 +18,15 @@ meas_log = zeros(num_entries, meas_size); % log measurements over time
 
 % Log initial state
 state_log(entry_index,:) = x0;
-meas_log(entry_index,:) = [x0(1); x0(2)];
+true_x_pos = x0(1);
+true_y_pos = x0(2);
+sensor_noise = sqrt(R)*randn(1,1);
+pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos]) + sensor_noise;
+pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos]) + sensor_noise;
+pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise;
+pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise;
+curr_meas = [pseudorange1_fixed; pseudorange2_fixed; pseudorange3_fixed; pseudorange4_fixed];
+meas_log(entry_index,:) = curr_meas;
 entry_index = entry_index + 1;
 
 % Simulate Dynamics and Log
@@ -35,18 +43,25 @@ while(t < time_to_run)
     true_x_pos = x_next(1);
     true_y_pos = x_next(2);
     % Take pseudorange measurements and add fixed variance noise
-    if(fixed_noise)
-        V = sqrt(R)*randn(2,1);
-        sensor_noise = [V(1); V(2)];
-        pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos], sensor_noise);
-        pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos], sensor_noise);
-        pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos], sensor_noise);
-        pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos], sensor_noise);
+    if(fixed_variance)
+        sensor_noise = sqrt(R)*randn(1,1);
+        pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise;
         curr_meas = [pseudorange1_fixed; pseudorange2_fixed; pseudorange3_fixed; pseudorange4_fixed];
     else
-       % determine noise based on c/no ratio for each satellite as well as
-       % map and current position
-%         curr_meas = []
+        % safa gives R for each satellite
+        sensor_noise1 = sqrt(R1)*randn(1,1);
+        sensor_noise2 = sqrt(R2)*randn(1,1);
+        sensor_noise3 = sqrt(R3)*randn(1,1);
+        sensor_noise4 = sqrt(R4)*randn(1,1);
+
+        pseudorange1_fixed = calc_pseudorange(sat_positions(1,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange3_fixed = calc_pseudorange(sat_positions(3,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        pseudorange4_fixed = calc_pseudorange(sat_positions(4,:), [true_x_pos, true_y_pos]) + sensor_noise;
+        curr_meas = [pseudorange1_fixed; pseudorange2_fixed; pseudorange3_fixed; pseudorange4_fixed];
     end
     % Log
     state_log(entry_index,:) = x_next;
