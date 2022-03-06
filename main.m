@@ -157,3 +157,47 @@ ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 zlabel('Z Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 title('Satellite 4 Pseudorange Measurements Over Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
 
+%% 5 EKF 
+fixed_variance = 0;
+rng(1)
+x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
+time= 10; % in seconds
+t = (0:params.delta_t:time)';
+% Force input
+fx = 500*cos(.4*t);
+fy = 1000*sin(.05*t);
+u = [fx, fy];
+% Simulate Dynamics and Log
+Q = 1*10^-10*eye(4);
+R = diag([3,3,3,3]);
+satellite1_location = [0, 0];
+satellite2_location = [10, 0];
+satellite3_location = [0, 10];
+satellite4_location = [10, 10];
+all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
+
+[muEst1,~] = EKF(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
+
+fixed_variance = 1;
+[muEst2,mu] = EKF(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
+
+EVGRC = [8, 2];
+EVGRD = [3, 6];
+satellite1_location = [0, 0];
+satellite2_location = [10, 0];
+satellite3_location = [0, 10];
+satellite4_location = [10, 10];
+
+figure()
+hold on
+plot(mu(1,:),mu(2,:))
+plot(muEst1(1,:),muEst(2,:))
+plot(muEst2(1,:),muEst(2,:))
+legend('mu','muEstVari','muEstFixed')
+plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
+plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
+plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
+plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
+plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
+plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
+grid on

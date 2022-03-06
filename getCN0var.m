@@ -24,6 +24,11 @@ R4 = CN02VAR(CN04);
     function [VAR] = CN02VAR(CN0)
         dBpoints = [6 40];
         VARpoints = [10 .1];
+        if CN0 < 6
+            CN0 = 6;
+        elseif CN0 > 40
+            CN0 = 40;
+        end
         VAR = interp1(dBpoints,VARpoints,CN0);
     end
 
