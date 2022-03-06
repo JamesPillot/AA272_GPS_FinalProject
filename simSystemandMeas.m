@@ -47,6 +47,7 @@ while(t < time_to_run)
        % determine noise based on c/no ratio for each satellite as well as
        % map and current position
 %         curr_meas = []
+    end
     % Log
     state_log(entry_index,:) = x_next;
     meas_log(entry_index,:) = curr_meas;

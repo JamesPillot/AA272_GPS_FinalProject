@@ -18,7 +18,7 @@ R = zeros(2,2);
 
 %% 1. Plot True Path with Trees and Satellites
 close all;
-EVGRC = [8, 2];
+EVGRC = [8, 3];
 EVGRD = [3, 6];
 satellite1_location = [0, 0];
 satellite2_location = [10, 0];
@@ -30,12 +30,12 @@ hold on;
 x_positions = true_path_meas_log(:,1);
 y_positions = true_path_meas_log(:,2);
 plot(x_positions, y_positions, '--');
-plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
-plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
-plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
+plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 30);
+plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 30);
+plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
 plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
-plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
-plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
+plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
+plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
 
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
