@@ -25,19 +25,25 @@ function [muEst,mu] = EKFmod(x0,u,time,sat_positions,Q,R,params,fixed_variance)
         process_noise = sqrt(Q)*randn(4,1);
         mu_true = mu_true + dt*x_dot + process_noise;
          %Iterate the filter
-         [r1, r2, r3 ,r4] = getCN0var(i);
-         R = diag([r1,r2,r3,r4]);
-        [~,drop] = max([r1, r2, r3 ,r4]);
-        if drop == 1
-           R = diag([r2,r3,r4]);
-        elseif drop == 2
-            R = diag([r1,r3,r4]);
-        elseif drop == 3
-            R = diag([r1,r2,r4]);
-        elseif drop == 4
-            R = diag([r1,r2,r3]);
-        end
-
+         
+         if fixed_variance == 1
+             [r1, r2, r3 ,r4] = getCN0var(i);
+             [~,drop] = max([r1, r2, r3 ,r4]);
+             R = diag([3 3 3]);
+         else
+             [r1, r2, r3 ,r4] = getCN0var(i);
+             R = diag([r1,r2,r3,r4]);
+            [~,drop] = max([r1, r2, r3 ,r4]);
+            if drop == 1
+               R = diag([r2,r3,r4]);
+            elseif drop == 2
+                R = diag([r1,r3,r4]);
+            elseif drop == 3
+                R = diag([r1,r2,r4]);
+            elseif drop == 4
+                R = diag([r1,r2,r3]);
+            end
+         end
         [mu_pred,P_pred] = ekf_predict(mu_cur,u(i,:),P_cur,Q,dt,params.m);
         [mu_update,P_update] = ekf_update(mu_pred,P_pred,mu_true,R,sat_positions,i,fixed_variance,drop);
         %Update and Store Results
@@ -129,7 +135,7 @@ function [muEst,mu] = EKFmod(x0,u,time,sat_positions,Q,R,params,fixed_variance)
     end
 
     function [curr_meas] = simulate_noisy_meas(mu_cur,sat_positions,R,drop,fixed_variance)
-        if(fixed_variance)
+        if fixed_variance == 1
             sensor_noise = sqrt(R)*randn(3,1);
             if drop == 1
                 pseudorange2_fixed = calc_pseudorange(sat_positions(2,:), [mu_cur(1), mu_cur(2)]) + sensor_noise(1);

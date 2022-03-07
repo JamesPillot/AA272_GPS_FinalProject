@@ -183,9 +183,8 @@ xlabel('time(s)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('\rho (m)', 'Interpreter', 'tex', 'Fontsize', 14);
 
 %% 5 EKF 
-seed = 25824370;
 fixed_variance = 0;
-rng(seed)
+rng(4710982)
 x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
 time= 10; % in seconds
 t = (0:params.delta_t:time)';
@@ -203,7 +202,7 @@ satellite4_location = [10, 10];
 all_sat_positions = [satellite1_location; satellite2_location; satellite3_location; satellite4_location];
 
 [muEst1,~] = EKF(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
-rng(seed)
+% rng(4710982)
 fixed_variance = 1;
 [muEst2,mu] = EKF(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
 
@@ -229,7 +228,6 @@ legend('True Path','Fixed Variance EKF','EVGR C','EVGR D','Satellite 1','Satelli
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 title('EKF Fixed Variance Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure1.png')
 
 figure()
 hold on
@@ -247,11 +245,10 @@ legend('True Path','Fixed Variance EKF','Varying Variance EKF','EVGR C','EVGR D'
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 title('EKF Varying Variance Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure2.png')
 
-% 6 Modified EKF 
+%% 6 Modified EKF 
 fixed_variance = 0;
-rng(seed)
+rng(656826854)
 x0 = [0;0;0;0]; % initially at rest at origin, state x is [x; y; xdot; ydot]
 time= 10; % in seconds
 t = (0:params.delta_t:time)';
@@ -271,11 +268,11 @@ all_sat_positions = [satellite1_location; satellite2_location; satellite3_locati
 [muEst4mod,mumod] = EKFModRVary(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
 
 fixed_variance = 1;
-rng(seed)
+% rng(656826854)
 [muEst5mod,mumod] = EKFmod(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
 
 fixed_variance = 0;
-rng(seed)
+% rng(656826854)
 [muEst6mod,mumod] = EKFmod(x0,u,time,all_sat_positions,Q,R,params,fixed_variance);
 
 EVGRC = [8, 2];
@@ -288,7 +285,7 @@ satellite4_location = [10, 10];
 figure()
 hold on
 plot(mumod(1,:),mumod(2,:))
-plot(muEst1(1,:),muEst1(2,:))
+plot(muEst2(1,:),muEst2(2,:))
 plot(muEst4mod(1,:),muEst4mod(2,:))
 plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
 plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
@@ -297,72 +294,16 @@ plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', '
 plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
 plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
 grid on
-legend('True Path','Varying Variance EKF','Varying Variance Mod. EKF','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
+legend('True Path','Fixed Variance EKF','Varying Variance Mod. EKF','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 title('Varying Variance Modified EKF Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure3.png')
 
 figure()
 hold on
 plot(mumod(1,:),mumod(2,:))
 plot(muEst2(1,:),muEst2(2,:))
-plot(muEst5mod(1,:),muEst5mod(2,:))
-plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
-plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
-plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
-plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
-plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
-plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
-grid on
-legend('True Path','Fixed Variance EKF','Fixed Variance Mod. EKF Drop Sat.','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
-xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-title('Fixed Variance Modified EKF Trajectory Drop Sat.', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure4.png')
-
-figure()
-hold on
-plot(mumod(1,:),mumod(2,:))
-plot(muEst1(1,:),muEst1(2,:))
-plot(muEst6mod(1,:),muEst6mod(2,:))
-plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
-plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
-plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
-plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
-plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
-plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
-grid on
-legend('True Path','Varying Variance EKF','Varying Variance Mod. EKF Drop Sat.','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
-xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-title('Varying Variance Modified EKF Trajectory Drop Sat.', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure5.png')
-
-figure()
-hold on
-plot(mumod(1,:),mumod(2,:))
-plot(muEst5mod(1,:),muEst5mod(2,:))
-plot(muEst6mod(1,:),muEst6mod(2,:))
-plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
-plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
-plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
-plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', 'blue', 'MarkerSize', 10);
-plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
-plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
-grid on
-legend('True Path','Fixed Variance Mod. EKF Drop Sat.','Varying Variance Mod. EKF Drop Sat.','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
-xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-title('Modified EKF Trajectories Drop Sat.', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure6.png')
-
-figure()
-hold on
-plot(mumod(1,:),mumod(2,:))
-plot(muEst1(1,:),muEst1(2,:))
 plot(muEst4mod(1,:),muEst4mod(2,:))
-plot(muEst6mod(1,:),muEst6mod(2,:))
 plot(EVGRC(1), EVGRC(2),  's', 'MarkerFaceColor', 'black', 'MarkerSize', 100);
 plot(EVGRD(1), EVGRD(2),  's', 'MarkerFaceColor', 'magenta', 'MarkerSize', 100);
 plot(satellite1_location(1), satellite1_location(2),  'bo', 'MarkerFaceColor', 'red', 'MarkerSize', 10);
@@ -370,8 +311,7 @@ plot(satellite2_location(1), satellite2_location(2),  'bo', 'MarkerFaceColor', '
 plot(satellite3_location(1), satellite3_location(2),  'bo', 'MarkerFaceColor', 'green', 'MarkerSize', 10);
 plot(satellite4_location(1), satellite4_location(2),  'bo', 'MarkerFaceColor', 'yellow', 'MarkerSize', 10);
 grid on
-legend('True Path','Varying Variance EKF','Varying Variance Mod. EKF','Varying Variance Mod. EKF Drop Sat.','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
+legend('True Path','Fixed Variance EKF','Varying Variance Mod. EKF','EVGR C','EVGR D','Satellite 1','Satellite 2','Satellite 3','Satellite 4','Interpreter', 'latex','Fontsize', 12, 'Location', 'northwest')
 xlabel('X Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
 ylabel('Y Position (meters)', 'Interpreter', 'latex', 'Fontsize', 14);
-title('Varying Variance Modified EKF Trajectories', 'Interpreter', 'latex', 'Fontsize', 16);
-saveas(gcf,'Figure7.png')
+title('Varying Variance Modified EKF Trajectory', 'Interpreter', 'latex', 'Fontsize', 16);
